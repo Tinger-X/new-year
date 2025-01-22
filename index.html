@@ -213,13 +213,13 @@
   </script>
 
   <script>
-    function base64Decode(base64str) {
-      const decodedData = atob(base64str);
-      const byteArray = new Uint8Array(decodedData.length);
-      for (let i = 0; i < decodedData.length; i++) {
-        byteArray[i] = decodedData.charCodeAt(i);
-      }
-      return new TextDecoder().decode(byteArray);
+    function base64Decode(base64url) {
+      let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+      const padding = base64.length % 4 === 0 ? "" : "=".repeat(4 - base64.length % 4);
+      base64 += padding;
+      const bytes = new Uint8Array(atob(base64).split("").map(char => char.charCodeAt(0)));
+      const decoder = new TextDecoder();
+      return decoder.decode(bytes);
     }
     let action = "往事清零爱恨随意，2025希望你活的开心，不用回头不再将就，过去所有的遗憾都是2024的惊喜，遇见你都是天意，拥有你都是幸运2025，愿自己有能力爱你！";
     const params = new URLSearchParams(window.location.search);
