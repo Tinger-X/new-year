@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>新年祝福制作</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 100vw;
+      padding: 20px 10px;
+    }
+
+    #action {
+      width: 90%;
+      min-height: 6em;
+      margin: 10px 5% 30px;
+      padding: 4px;
+    }
+
+    .res {
+      display: none;
+      width: 80%;
+      margin: 10px 10% 20px;
+    }
+
+    .res.show {
+      display: block;
+    }
+
+    #gen {
+      width: 50%;
+      margin: 0 25%;
+      line-height: 30px;
+      text-align: center;
+      border-radius: 8px;
+      border: 1px solid skyblue;
+      color: deepskyblue;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #url {
+      display: block;
+      width: 100%;
+      word-wrap: break-word;
+      color: dimgray;
+    }
+  </style>
+</head>
+
+<body>
+  <h3>请输入祝福语(注：使用 # 分割)</h3>
+  <textarea id="action" placeholder="2025#新春快乐"></textarea>
+  <div class="res">
+    <p>直达连接：<a href="" id="go"></a></p>
+    <p>点击复制：<span id="url"></span></p>
+  </div>
+  <div id="gen">生成连接</div>
+
+  <script>
+    const HOST = new URL(window.location.href);
+    function base64Encode(plain) {
+      const utf8Bytes = new TextEncoder().encode(plain);
+      return btoa(String.fromCharCode.apply(null, utf8Bytes));
+    }
+    const $input = document.querySelector("#action"),
+      $res = document.querySelector(".res"),
+      $a = document.querySelector("#go"),
+      $url = document.querySelector("#url");
+    document.querySelector("#gen").addEventListener("click", () => {
+      const plain = $input.value.trim();
+      if (plain.length === 0) {
+        return alert("请输入祝福语");
+      }
+      const encode = base64Encode(plain);
+      $a.setAttribute("href", `/?a=${encode}`);
+      $a.textContent = plain.split("#")[0];
+      $url.textContent = `${HOST.protocol}://${HOST.hostname}:${HOST.port}/?a=${encode}`;
+      $res.classList.add("show");
+    });
+    $url.addEventListener("click", () => {
+      navigator.clipboard.writeText($url.textContent).then(function () {
+        alert("复制成功，快去分享吧");
+      }).catch(function (err) {
+        alert("复制失败，请手动分享");
+      });
+    });
+  </script>
+</body>
+
+</html>
