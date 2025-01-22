@@ -213,19 +213,15 @@
   </script>
 
   <script>
-    function base64Decode(base64url) {
-      let base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
-      const padding = base64.length % 4 === 0 ? "" : "=".repeat(4 - base64.length % 4);
-      base64 += padding;
-      const bytes = new Uint8Array(atob(base64).split("").map(char => char.charCodeAt(0)));
-      const decoder = new TextDecoder();
-      return decoder.decode(bytes);
-    }
     let action = "往事清零爱恨随意，2025希望你活的开心，不用回头不再将就，过去所有的遗憾都是2024的惊喜，遇见你都是天意，拥有你都是幸运2025，愿自己有能力爱你！";
     const params = new URLSearchParams(window.location.search);
     try {
-      const words = params.get("a");
-      if (words) action = base64Decode(words);
+      const key = params.get("a");
+      if (key !== null) {
+        fetch(`https://kv.tinger.us.kg/?key=${key}`).then(res => res.json()).then(res => {
+          if (res.code === 200) action = res.data;
+        });
+      }
     } catch (e) {
       console.log(e);
     }
@@ -249,11 +245,11 @@
       $('#yhBtn').hide();
       fireworks();
       updateConfig({ autoLaunch: true });
+      fscreen.requestFullscreen(document.documentElement);
       setTimeout(() => {
         start();
-      }, 3000);
+      }, 1000);
       setTimeout(() => {
-        fscreen.requestFullscreen(document.documentElement);
         updateConfig({ finale: true });
       }, 6000);
     });

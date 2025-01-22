@@ -65,13 +65,6 @@
   <div id="gen">生成连接</div>
 
   <script>
-    const HOST = new URL(window.location.href);
-    function base64Encode(plain) {
-      const encoder = new TextEncoder();
-      const bytes = encoder.encode(plain);
-      const base64 = btoa(String.fromCharCode(...bytes));
-      return base64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
-    }
     const $input = document.querySelector("#action"),
       $res = document.querySelector(".res"),
       $a = document.querySelector("#go"),
@@ -81,11 +74,19 @@
       if (plain.length === 0) {
         return alert("请输入祝福语");
       }
-      const encode = base64Encode(plain);
-      $a.setAttribute("href", `/?a=${encode}`);
-      $a.textContent = plain.split("#")[0];
-      $url.textContent = `${HOST.protocol}://${HOST.hostname}:${HOST.port}/?a=${encode}`;
-      $res.classList.add("show");
+      fetch(
+        "https://kv.tinger.us.kg/",
+        { method: "POST", body: plain }
+      ).then(res => res.json()).then(res => {
+        if (res.code === 200) {
+          $a.setAttribute("href", `https://2025.tinger.host/?a=${res.data}`);
+          $a.textContent = plain.substring(0, 5);
+          $url.textContent = `https://2025.tinger.host/?a=${res.data}`;
+          $res.classList.add("show");
+        } else {
+          return alert(res.msg);
+        }
+      });
     });
     $url.addEventListener("click", () => {
       navigator.clipboard.writeText($url.textContent).then(function () {
